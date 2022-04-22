@@ -2,21 +2,27 @@ library(ggplot2)
 library(ggpubr)
 library(FactoMineR)
 library(factoextra)
+#lectura del archivo. Se debe seleccionar.
 data <- read.csv2(choose.files(), sep=",")
-#eliminar NA's. Hay 16 NA's en la data, todas en el atributo BareNuclei.
+#Eliminar NA's. Hay 16 NA's en la data, todas en el atributo BareNuclei.
+#la BD se modifico para cambiar los símbolos "?" por "NA".
 data <- na.omit(data)
 
 #https://gitlab.com/nameless999/material-analisis-de-datos/-/blob/main/1_PCA.ipynb
 #http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/112-pca-principal-component-analysis-essentials/
+#Se crea un nuevo dataframe sin la ultima columna, esta indica la clase de la fila.
+#Tambien se elimina la primera columna pues estos datos son básicamente un id por lo que no es relevante para el analisis de los datos.
 d<-data[,-11]
 pca <- PCA(d[,-1], scale.unit = TRUE, ncp = 5, graph = TRUE)
 pca
 
 
-#funcion para hallar moda. https://r-coder.com/moda-r/
+#Función para hallar moda. https://r-coder.com/moda-r/
 modes <- function(x) {
   return(as.numeric(names(which.max(table(x)))))
 }
+
+#Estadísticas básicas de cada columna.
 columns <- data.frame(
   "op" = c("Mediana", "Media", "Moda", "Desviacion", "Varianza"),
   "SampleCode"= c(median(data$SampleCode),mean(data$SampleCode),modes(data$SampleCode),sd(data$SampleCode),var(data$SampleCode)),
@@ -32,9 +38,9 @@ columns <- data.frame(
   "Class"= c(median(data$Class),mean(data$Class),modes(data$Class),sd(data$Class),var(data$Class)))
 columns
 
-
-
+#Summary de la data.
 summary(data)
-cor(data)#coef de person. https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/cor
 
+#coef de person. https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/cor
+cor(data)
 
