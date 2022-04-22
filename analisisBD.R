@@ -1,28 +1,31 @@
 library(ggplot2)
 library(ggpubr)
 library(FactoMineR)
+library(corrplot)
 library(factoextra)
 #lectura del archivo. Se debe seleccionar.
 data <- read.csv2(choose.files(), sep=",")
 #Eliminar NA's. Hay 16 NA's en la data, todas en el atributo BareNuclei.
-#la BD se modifico para cambiar los símbolos "?" por "NA".
+#la BD se modifico para cambiar los s?mbolos "?" por "NA".
 data <- na.omit(data)
 
 #https://gitlab.com/nameless999/material-analisis-de-datos/-/blob/main/1_PCA.ipynb
 #http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/112-pca-principal-component-analysis-essentials/
 #Se crea un nuevo dataframe sin la ultima columna, esta indica la clase de la fila.
-#Tambien se elimina la primera columna pues estos datos son básicamente un id por lo que no es relevante para el analisis de los datos.
+#Tambien se elimina la primera columna pues estos datos son b?sicamente un id por lo que no es relevante para el analisis de los datos.
 d<-data[,-11]
 pca <- PCA(d[,-1], scale.unit = TRUE, ncp = 5, graph = TRUE)
 pca
+fviz_eig(pca)
+fviz_pca_biplot(pca)
+fviz_pca_ind(pca)
 
-
-#Función para hallar moda. https://r-coder.com/moda-r/
+#Funci?n para hallar moda. https://r-coder.com/moda-r/
 modes <- function(x) {
   return(as.numeric(names(which.max(table(x)))))
 }
 
-#Estadísticas básicas de cada columna.
+#Estad?sticas b?sicas de cada columna.
 columns <- data.frame(
   "op" = c("Mediana", "Media", "Moda", "Desviacion", "Varianza"),
   "SampleCode"= c(median(data$SampleCode),mean(data$SampleCode),modes(data$SampleCode),sd(data$SampleCode),var(data$SampleCode)),
@@ -42,5 +45,6 @@ columns
 summary(data)
 
 #coef de person. https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/cor
-cor(data)
+c=cor(data[,-1])
 
+corrplot(c)
