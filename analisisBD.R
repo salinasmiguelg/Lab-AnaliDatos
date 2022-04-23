@@ -3,11 +3,29 @@ library(ggpubr)
 library(FactoMineR)
 library(corrplot)
 library(factoextra)
+library(tidyr)
+library(dplyr)
+library(leaps)
+require(car)
 #lectura del archivo. Se debe seleccionar.
 data <- read.csv2(choose.files(), sep=",")
 #Eliminar NA's. Hay 16 NA's en la data, todas en el atributo BareNuclei.
 #la BD se modifico para cambiar los s?mbolos "?" por "NA".
 data <- na.omit(data)
+set.seed(1287)
+
+datos <- sample_n(data, 50)
+datos <- datos %>% filter(datos[["Class"]] == 4)
+modelo <- lm(formula = UOCSize ~ UOCShape, data = datos)
+print(summary(modelo))
+
+p <- ggscatter(datos, x ="UOCSize", y ="UOCShape", color = "blue", fill = "blue",
+               xlab = "UOCSize", ylab = "UOCShape")
+
+p <- p + geom_smooth(method = lm, se = FALSE, colour = "red")
+print (p)
+
+
 
 #https://gitlab.com/nameless999/material-analisis-de-datos/-/blob/main/1_PCA.ipynb
 #http://www.sthda.com/english/articles/31-principal-component-methods-in-r-practical-guide/112-pca-principal-component-analysis-essentials/
